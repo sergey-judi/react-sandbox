@@ -69,6 +69,9 @@ const Divs = () => {
         }}
         style={{ margin: '10px' }}
       />
+      <div>
+        REACT_APP_MONGODB_URL='{process.env.REACT_APP_MONGODB_URL}' REACT_APP_MONGODB_USERNAME='{process.env.REACT_APP_MONGODB_USERNAME}' REACT_APP_MONGODB_PASSWORD='{process.env.REACT_APP_MONGODB_PASSWORD}'
+      </div>
       {divs}
     </div>
   );

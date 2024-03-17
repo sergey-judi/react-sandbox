@@ -1,4 +1,4 @@
-name: Build and Deploy
+name: Build
 
 on:
   push:
@@ -16,20 +16,6 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: '20'
-        problem-matchers: 'npm'
 
-    - name: Create .env file
-      run: |
-        touch .env
-        echo REACT_APP_MONGODB_URL=${{ secrets.REACT_APP_MONGODB_URL }} >> .env
-        echo REACT_APP_MONGODB_USERNAME=${{ secrets.REACT_APP_MONGODB_USERNAME }} >> .env
-        echo REACT_APP_MONGODB_PASSWORD=${{ secrets.REACT_APP_MONGODB_PASSWORD }} >> .env
-        cat .env
-
-    - name: Install dependencies
-      run: npm install
-
-    - name: Build and Deploy
-      env:
-        CUSTOM_COMMIT_MESSAGE: "Auto deploy from GitHub Actions"
-      run: npm run deploy -- -m "${{ github.event.inputs.message || env.CUSTOM_COMMIT_MESSAGE }}"
+    - name: Build
+      run: npm run build

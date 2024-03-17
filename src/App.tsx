@@ -9,7 +9,7 @@ import Header from './components/Header';
 
 function App() {
   return (
-    <Router basename="/react-sandbox">
+    <Router>
       <div>
         <Header />
         <Routes>

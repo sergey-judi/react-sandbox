@@ -1,18 +1,35 @@
 import React, { useState } from 'react';
 
+class ClickableDiv {
+  constructor(wasClicked = false, timestamp = null) {
+    this.wasClicked = wasClicked;
+    this.timestamp = timestamp;
+  }
+
+  toggleWasClicked() {
+    this.wasClicked = !this.wasClicked;
+    this.timestamp = new Date();
+  }
+}
+
 const Divs = () => {
-  const [numDivs, setNumDivs] = useState(5); // Set initial number of divs
-  // Initialize an array to track the toggle state of each div
-  const [clicked, setClicked] = useState(Array(numDivs).fill(false));
+  const [divsNumber, setDivsNumber] = useState(5); // Set initial number of divs
+  
+  const [divsState, setDivsState] = useState(Array(divsNumber).fill(() => new ClickableDiv())); // Initialize an array to track the toggle state of each div
 
   const handleDivClick = (index) => {
     // Toggle the clicked state for the div at the specific index
-    const updatedClicked = clicked.slice(); // Clone the array to avoid direct state mutation
-    updatedClicked[index] = !updatedClicked[index];
-    setClicked(updatedClicked);
+    const updatedState = divsState.slice(); // Clone the array to avoid direct state mutation
+    const existingDivState = divsState[index];
+
+    const updatedDivState = new ClickableDiv(existingDivState.wasClicked);
+    updatedDivState.toggleWasClicked();
+
+    updatedState[index] = updatedDivState;
+    setDivsState(updatedState);
   };
 
-  const divs = Array.from({ length: numDivs }, (_, index) => (
+  const divs = divsState.map((divState, index) => (
     <div
       key={index}
       onClick={() => handleDivClick(index)}
@@ -20,20 +37,20 @@ const Divs = () => {
         margin: '10px',
         padding: '10px',
         border: '1px solid black',
-        backgroundColor: clicked[index] ? '#FFCCCB' : '#CCFFCD', // Change color if clicked
+        backgroundColor: divState.wasClicked ? '#FFCCCB' : '#CCFFCD', // Change color if clicked
         cursor: 'pointer',
       }}
     >
-      Div {index + 1}
+      Div {index + 1} - Last Clicked: {divState.timestamp != undefined ? new Date(divState.timestamp).toISOString() : "never"}
     </div>
   ));
 
   // Ensure the clicked array matches the number of divs when it changes
   const adjustClickedArray = (newSize) => {
-    setClicked((prevClicked) => {
+    setDivsState((prevClicked) => {
       const updatedClicked = prevClicked.slice(0, newSize);
       while (updatedClicked.length < newSize) {
-        updatedClicked.push(false);
+        updatedClicked.push(new ClickableDiv());
       }
       return updatedClicked;
     });
@@ -43,11 +60,11 @@ const Divs = () => {
     <div>
       <input
         type="number"
-        value={numDivs}
+        value={divsNumber}
         min="1" // Prevent negative numbers
         onChange={(e) => {
           const newSize = Number(e.target.value);
-          setNumDivs(newSize);
+          setDivsNumber(newSize);
           adjustClickedArray(newSize);
         }}
         style={{ margin: '10px' }}
